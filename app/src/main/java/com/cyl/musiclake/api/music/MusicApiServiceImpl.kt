@@ -94,7 +94,7 @@ object MusicApiServiceImpl {
                                 musicList.add(MusicUtils.getMusic(music))
                             }
                         } catch (e: Throwable) {
-                            LogUtil.e("search", e.message)
+                            LogUtil.e("search", e.message,e)
                         }
                         LogUtil.e("search", "结果：" + musicList.size)
 

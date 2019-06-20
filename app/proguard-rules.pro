@@ -89,6 +89,10 @@
 -keep class org.litepal.** {
     *;
 }
+# bean 对象
+-keep class com.cyl.musicapi.bean.** {
+    *;
+}
 
 -keep class * extends org.litepal.crud.DataSupport {
     *;

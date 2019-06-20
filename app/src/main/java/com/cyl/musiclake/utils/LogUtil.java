@@ -51,6 +51,10 @@ public class LogUtil {
         if (LEVEL <= ERROR && IS_DEBUG) {
             Log.e(tag, msg);
         }
+    }  public static void e(String tag, String msg,Throwable e) {
+        if (LEVEL <= ERROR && IS_DEBUG) {
+            Log.e(tag, msg,e);
+        }
     }
 
     public static void v(String msg) {
