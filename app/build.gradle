@@ -20,8 +20,8 @@ android {
         applicationId "com.cyl.musiclake"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 32
-        versionName "5.0.1"
+        versionCode 33
+        versionName "5.0.2"
         multiDexEnabled true
         android.compileOptions.sourceCompatibility 1.8
         android.compileOptions.targetCompatibility 1.8
@@ -139,6 +139,7 @@ dependencies {
 
     // 编辑音乐文件标签 新版本2.2.6版本报错
     implementation files('libs/jaudiotagger-2.2.4-SNAPSHOT.jar')
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
 
     //socket.io配置
     api('io.socket:socket.io-client:1.0.0') {

@@ -16,7 +16,7 @@ public class Constants {
     public static final String XIAMI = "xiami";
     public static final String BAIDU = "baidu";
     public static final String NETEASE = "netease";
-    public static final String VIDEO = "video";
+    public static final String VIDEO = "video";//本地视频
 
     //特殊歌单类型
     public static final String PLAYLIST_LOVE_ID = "love";
@@ -131,17 +131,8 @@ public class Constants {
     public static final String FILENAME_LRC = ".lrc";
     public static final int MUSIC_LIST_SIZE = 10;
 
-    public static final String BASE_URL = "http://musicapi.leanapp.cn/";//"/ting";
-
-
     public static final String BASE_MUSIC_URL = "http://tingapi.ting.baidu.com/v1/restserver/ting?" +
             "from=android&version=5.8.2.0&channel=huwei&operator=1&method=baidu.ting.billboard.billCategory&format=json&kflag=2";
-
-    public static final String PLAY_MUSIC_URL = "http://tingapi.ting.baidu.com/v1/restserver/ting?" +
-            "method=baidu.ting.song.play&songid=877578";
-
-
-    public static final String DOWNLOAD_FILENAME = "hkmusic.apk";
 
     public static final String DEAULT_NOTIFICATION = "notification";
     public static final String TRANSTITION_ALBUM = "transition_album_art";
@@ -149,10 +140,7 @@ public class Constants {
     /**
      * QQ音乐Api*************************************************
      */
-    public static final String BASE_URL_QQ_MUSIC_SEARCH = "http://c.y.qq.com/soso/fcgi-bin/search_cp?";
-
-    public static final String BASE_URL_QQ_MUSIC_URL = "http://dl.stream.qqmusic.qq.com/";
-    public static final String BASE_URL_QQ_MUSIC_KEY = "https://c.y.qq.com/base/fcgi-bin/fcg_musicexpress.fcg?";
+    public static final String BASE_URL_QQ_MUSIC_URL = "https://u.y.qq.com";
 
     /**
      * 虾米音乐Api*************************************************
@@ -176,7 +164,7 @@ public class Constants {
     /**
      * 网易云音乐接口
      */
-    public static final String BASE_NETEASE_URL = "http://192.168.31.78:3000/";
+    public static final String BASE_NETEASE_URL = "http://musiclake.leanapp.cn";
     //bugly app_id
     public static final String BUG_APP_ID = "fd892b37ea";
 

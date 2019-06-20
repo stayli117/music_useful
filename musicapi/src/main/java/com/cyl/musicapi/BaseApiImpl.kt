@@ -199,7 +199,7 @@ object BaseApiImpl {
      * id，歌手ID
      */
     fun getArtistSongs(vendor: String, id: String, offset: Int, limit: Int, success: (result: ArtistSongsData) -> Unit, fail: ((String) -> Unit)? = null) {
-        mWebView?.callHandler("api.getArtistSongs", arrayOf<Any>(vendor, id, offset, limit)) { retValue: JSONObject ->
+        mWebView?.callHandler("api.getArtistSongs", arrayOf<Any>(vendor, id)) { retValue: JSONObject ->
             try {
                 val result = gson.fromJson<ArtistSongsData>(retValue.toString(), ArtistSongsData::class.java)
                 success.invoke(result)
@@ -243,7 +243,7 @@ object BaseApiImpl {
      * 获取歌手列表
      */
     fun getArtists(offset: Int, params: Any, success: (result: ArtistsData) -> Unit, fail: ((String) -> Unit)? = null) {
-        mWebView?.callHandler("api.qq.getArtists", arrayOf(offset, params)) { retValue: JSONObject ->
+        mWebView?.callHandler("musicApi.qq.getArtists", arrayOf(offset, params)) { retValue: JSONObject ->
             try {
                 Log.e("BaseApiImpl", "getArtists $retValue")
                 val result = gson.fromJson<ArtistsData>(retValue.toString(), ArtistsData::class.java)

@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.cyl.musiclake.BuildConfig
 import com.cyl.musiclake.R
 import com.cyl.musiclake.api.music.MusicUtils
@@ -24,11 +25,13 @@ import com.cyl.musiclake.common.Constants
 import com.cyl.musiclake.common.Extras
 import com.cyl.musiclake.common.NavigationHelper
 import com.cyl.musiclake.player.PlayManager
-import com.cyl.musiclake.ui.OnlinePlaylistUtils
 import com.cyl.musiclake.ui.deleteSingleMusic
 import com.cyl.musiclake.ui.music.edit.EditMusicActivity
+import com.cyl.musiclake.ui.music.edit.PlaylistManagerUtils
 import com.cyl.musiclake.ui.music.mv.BaiduMvDetailActivity
 import com.cyl.musiclake.utils.ConvertUtils
+import com.cyl.musiclake.utils.LogUtil
+import com.cyl.musiclake.utils.ToastUtils
 import com.cyl.musiclake.utils.Tools
 import org.jetbrains.anko.support.v4.startActivity
 
@@ -50,6 +53,7 @@ class BottomDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         var music: Music? = null
+        var TAG: String = "BottomDialogFragment"
 
         fun newInstance(music: Music?): BottomDialogFragment {
             val args = Bundle()
@@ -122,11 +126,26 @@ class BottomDialogFragment : BottomSheetDialogFragment() {
                     artist.artistId = music?.artistId
                     artist.name = music?.artist
                     artist.type = music?.type
-                    NavigationHelper.navigateToPlaylist(it1, artist, null)
-                } else {
-                    val artist = music?.let { it1 -> MusicUtils.getArtistInfo(it1) }
-                    artist?.let {
-                        NavigationHelper.navigateToPlaylist(mContext, it, null)
+                    NavigationHelper.navigateToArtist(it1, artist, null)
+                } else if (music != null) {
+                    LogUtil.e(TAG, music?.toString())
+                    val artist = MusicUtils.getArtistInfo(music)
+                    if (artist.size == 1) {
+                        NavigationHelper.navigateToArtist(mContext, artist[0], null)
+                    } else if (artist.size > 1) {
+                        val artistNames = music?.artist?.let { it.split(",").dropLastWhile { it.isEmpty() }.toList() }
+                        context?.let {
+                            artistNames?.let { it2 ->
+                                MaterialDialog.Builder(it)
+                                        .title("选择歌手")
+                                        .items(it2)
+                                        .itemsCallback { dialog, itemView, position, text ->
+                                            NavigationHelper.navigateToArtist(mContext, artist[position], null)
+                                        }.show()
+                            }
+                        }
+                    } else {
+                        ToastUtils.show("歌手为空")
                     }
                 }
             }
@@ -143,7 +162,7 @@ class BottomDialogFragment : BottomSheetDialogFragment() {
                 removeSuccessListener?.invoke(music)
             }
         } else {
-            OnlinePlaylistUtils.disCollectMusic(pid, music) {
+            PlaylistManagerUtils.disCollectMusic(pid, music) {
                 removeSuccessListener?.invoke(music)
             }
         }
@@ -212,7 +231,7 @@ class BottomDialogFragment : BottomSheetDialogFragment() {
                     R.drawable.ic_queue_play_next -> PlayManager.nextPlay(music)
                     R.drawable.ic_playlist_add -> {
                         if (music?.type != Constants.LOCAL) {
-                            OnlinePlaylistUtils.addToPlaylist(mContext, music)
+                            PlaylistManagerUtils.addToPlaylist(mContext, music)
                         }
                     }
                     R.drawable.ic_art_track -> {

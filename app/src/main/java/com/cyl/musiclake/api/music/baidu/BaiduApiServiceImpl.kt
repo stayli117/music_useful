@@ -5,10 +5,10 @@ import com.cyl.musiclake.api.music.MusicUtils
 import com.cyl.musiclake.api.music.MusicUtils.PIC_SIZE_BIG
 import com.cyl.musiclake.api.music.MusicUtils.PIC_SIZE_NORMAL
 import com.cyl.musiclake.api.music.MusicUtils.PIC_SIZE_SMALL
+import com.cyl.musiclake.api.net.ApiManager
 import com.cyl.musiclake.bean.*
 import com.cyl.musiclake.bean.data.SongLoader
 import com.cyl.musiclake.common.Constants
-import com.cyl.musiclake.api.net.ApiManager
 import com.cyl.musiclake.utils.FileUtils
 import com.cyl.musiclake.utils.LogUtil
 import io.reactivex.Observable
@@ -70,7 +70,7 @@ object BaiduApiServiceImpl {
                         music.album = songInfo.albumTitle
                         music.albumId = songInfo.albumId
                         music.artist = songInfo.artistName
-                        music.artistId = songInfo.tingUid
+                        music.artistId = songInfo.allArtistTingUid
                         music.title = songInfo.title
                         music.isOnline = true
                         music.hasMv = songInfo.hasMv
@@ -141,14 +141,13 @@ object BaiduApiServiceImpl {
     }
 
     /**
-     * 获取歌单详情
+     * 获取歌曲详情
      * "http://music.baidu.com/data/music/links?songIds=$mid"
      */
     fun getTingSongInfo(music: Music): Observable<Music> {
         val url = Constants.URL_GET_SONG_INFO + music.mid
         return apiService.getTingSongInfo(url)
                 .flatMap { data ->
-                    val music = Music()
                     val songInfo = data.data.songList?.get(0)
                     songInfo?.let {
                         music.type = Constants.BAIDU
@@ -284,6 +283,7 @@ object BaiduApiServiceImpl {
      * 获取歌手列表
      */
     fun getArtistSongList(artistId: String, offset: Int): Observable<Artist> {
+        LogUtil.d(TAG, "artistId $artistId offset $offset")
         return apiService.getArtistSongList(artistId, offset)
                 .flatMap {
                     val artist = Artist()
@@ -305,6 +305,9 @@ object BaiduApiServiceImpl {
                             music.coverBig = MusicUtils.getAlbumPic(it.picSmall, Constants.BAIDU, PIC_SIZE_BIG)
                             songs.add(music)
                         }
+                        artist.desc = it.artistinfo?.intro
+                        artist.name = it.artistinfo?.name
+                        artist.picUrl = it.artistinfo?.avatarBig
                         artist.count = it.songNums
                         artist.songs = songs
                     }
@@ -318,6 +321,37 @@ object BaiduApiServiceImpl {
                     })
                 }
     }
+
+    /**
+     * 获取歌手列表
+     */
+    fun getArtistAlbumList(artistId: String, offset: Int): Observable<MutableList<Album>> {
+        LogUtil.d(TAG, "artistId $artistId offset $offset")
+        return apiService.getArtistAlbumList(artistId, offset)
+                .flatMap {
+                    val albumList = mutableListOf<Album>()
+                    it.albumlist?.forEach {
+                        val album = Album()
+                        album.albumId = it.albumId
+                        album.artistId = it.artistTingUid
+                        album.artistName = it.author
+                        album.count = it.songsTotal.toInt()
+                        album.name = it.title
+                        album.type = Constants.BAIDU
+                        album.cover = it.picSmall
+                        albumList.add(album)
+                    }
+                    Observable.create(ObservableOnSubscribe<MutableList<Album>> { e ->
+                        try {
+                            e.onNext(albumList)
+                            e.onComplete()
+                        } catch (error: Exception) {
+                            e.onError(Throwable(error.message))
+                        }
+                    })
+                }
+    }
+
 
     /**
      * 获取专辑信息

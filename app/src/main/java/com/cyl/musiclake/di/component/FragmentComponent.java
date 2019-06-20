@@ -6,27 +6,28 @@ import android.content.Context;
 import com.cyl.musiclake.di.module.FragmentModule;
 import com.cyl.musiclake.di.scope.ContextLife;
 import com.cyl.musiclake.di.scope.PerFragment;
-import com.cyl.musiclake.ui.music.discover.ArtistListFragment;
+import com.cyl.musiclake.ui.music.artist.fragment.ArtistInfoFragment;
+import com.cyl.musiclake.ui.music.discover.artist.QQArtistListFragment;
 import com.cyl.musiclake.ui.music.discover.DiscoverFragment;
 import com.cyl.musiclake.ui.download.ui.DownloadManagerFragment;
 import com.cyl.musiclake.ui.music.local.fragment.AlbumDetailFragment;
 import com.cyl.musiclake.ui.music.local.fragment.AlbumFragment;
 import com.cyl.musiclake.ui.music.local.fragment.ArtistFragment;
-import com.cyl.musiclake.ui.music.local.fragment.ArtistSongsFragment;
+import com.cyl.musiclake.ui.music.artist.fragment.ArtistSongsFragment;
 import com.cyl.musiclake.ui.music.local.fragment.LocalVideoFragment;
 import com.cyl.musiclake.ui.music.local.fragment.FoldersFragment;
 import com.cyl.musiclake.ui.music.mv.MvListFragment;
 import com.cyl.musiclake.ui.music.charts.fragment.ChartsDetailFragment;
 import com.cyl.musiclake.ui.music.mv.MvSearchListFragment;
-import com.cyl.musiclake.ui.music.playlist.LoveFragment;
+import com.cyl.musiclake.ui.music.playlist.love.LoveFragment;
 import com.cyl.musiclake.ui.music.my.MyMusicFragment;
 import com.cyl.musiclake.ui.music.bottom.PlayControlFragment;
-import com.cyl.musiclake.ui.music.playlist.PlaylistDetailFragment;
+import com.cyl.musiclake.ui.music.playlist.detail.PlaylistDetailFragment;
 import com.cyl.musiclake.ui.music.playlist.PlaylistFragment;
-import com.cyl.musiclake.ui.music.playlist.RecentlyFragment;
+import com.cyl.musiclake.ui.music.playlist.history.RecentlyFragment;
 import com.cyl.musiclake.ui.music.local.fragment.SongsFragment;
 import com.cyl.musiclake.ui.download.ui.DownloadedFragment;
-import com.cyl.musiclake.ui.music.playlist.TopPlaylistFragment;
+import com.cyl.musiclake.ui.music.playlist.square.TopPlaylistFragment;
 import com.cyl.musiclake.ui.music.playqueue.PlayQueueFragment;
 import com.cyl.musiclake.ui.my.BindLoginActivity;
 
@@ -84,7 +85,7 @@ public interface FragmentComponent {
 
     void inject(@NotNull ChartsDetailFragment chartsDetailFragment);
 
-    void inject(@NotNull ArtistListFragment artistListFragment);
+    void inject(@NotNull QQArtistListFragment QQArtistListFragment);
 
     void inject(MvSearchListFragment mvSearchListFragment);
 
@@ -93,4 +94,8 @@ public interface FragmentComponent {
     void inject(@NotNull PlaylistFragment playlistFragment);
 
     void inject(@NotNull TopPlaylistFragment topPlaylistFragment);
+
+    void inject(@NotNull ArtistInfoFragment artistInfoFragment);
+
+    void inject(@NotNull com.cyl.musiclake.ui.music.artist.fragment.AlbumFragment albumFragment);
 }
