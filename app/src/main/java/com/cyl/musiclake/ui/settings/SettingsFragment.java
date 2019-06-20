@@ -185,6 +185,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             }
             info.deleteCharAt(info.length() - 1);
             mSearchFilterPreference.setSummary(info);
+            mSearchFilterPreference.setValues(searchOptions);
         }
     }
 

@@ -16,7 +16,6 @@ import com.cyl.musiclake.common.Constants
 import com.cyl.musiclake.common.Extras
 import com.cyl.musiclake.common.NavigationHelper
 import com.cyl.musiclake.player.PlayManager
-import com.cyl.musiclake.ui.base.BaseActivity
 import com.cyl.musiclake.ui.base.BaseContract
 import com.cyl.musiclake.ui.base.BaseFragment
 import com.cyl.musiclake.ui.base.BasePresenter
@@ -61,11 +60,12 @@ class CoverFragment : BaseFragment<BasePresenter<BaseContract.BaseView>>() {
             activity?.let { it1 -> NavigationHelper.navigateToSoundEffect(it1) }
         }
 
+        val mTvQuality = view?.findViewById<TextView>(R.id.tv_quality);
         //音质点击
-        tv_quality.setOnClickListener {
+        mTvQuality?.setOnClickListener {
             QualitySelectDialog.newInstance(PlayManager.getPlayingMusic()).apply {
                 changeSuccessListener = {
-                    tv_quality.text = it
+                    mTvQuality.text = it
                 }
                 isDownload = false
             }.show(activity as AppCompatActivity)
