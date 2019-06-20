@@ -198,7 +198,7 @@ object BaseApiImpl {
      * 获取歌手单曲
      * id，歌手ID
      */
-    fun getArtistSongs(vendor: String, id: String, offset: Int, limit: Int, success: (result: ArtistSongsData) -> Unit, fail: ((String) -> Unit)? = null) {
+    fun getArtistSongs(vendor: String, id: String, success: (result: ArtistSongsData) -> Unit, fail: ((String) -> Unit)? = null) {
         mWebView?.callHandler("api.getArtistSongs", arrayOf<Any>(vendor, id)) { retValue: JSONObject ->
             try {
                 val result = gson.fromJson<ArtistSongsData>(retValue.toString(), ArtistSongsData::class.java)
