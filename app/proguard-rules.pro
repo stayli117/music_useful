@@ -93,6 +93,10 @@
 -keep class com.cyl.musicapi.bean.** {
     *;
 }
+# 网易热搜
+-keep class com.cyl.musicapi.netease.** {
+    *;
+}
 
 -keep class * extends org.litepal.crud.DataSupport {
     *;

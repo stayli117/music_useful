@@ -1,6 +1,5 @@
 package com.cyl.musiclake.ui.music.search
 
-import android.app.PendingIntent.getActivity
 import android.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
@@ -118,7 +117,9 @@ class SearchActivity : BaseActivity<SearchPresenter>(), SearchContract.View {
         //获取搜索历史
         mPresenter?.getSearchHistory()
 
-        if (!intent.getBooleanExtra("is_playlist", false)) {
+        val booleanExtra = intent.getBooleanExtra("is_playlist", false)
+        LogUtil.e("SearchActivity", " booleanExtra " + booleanExtra)
+        if (!booleanExtra) {
             //获取热搜
             mPresenter?.getHotSearchInfo()
         } else {

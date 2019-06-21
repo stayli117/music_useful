@@ -23,3 +23,8 @@
 #x5内核
 -dontwarn com.tencent.smtt.**
 -keep class com.tencent.smtt.** { *; }
+
+# 网易热搜
+-keep class com.cyl.musicapi.netease.** {
+    *;
+}
