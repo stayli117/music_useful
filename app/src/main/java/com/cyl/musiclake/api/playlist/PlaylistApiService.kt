@@ -154,7 +154,7 @@ interface PlaylistApiService {
 
 
     /**
-     * 获取用户信息
+     * 微博登录获取用户信息
      *
      * @param token
      * @param openid
@@ -163,6 +163,16 @@ interface PlaylistApiService {
     @GET("auth/weibo/android")
     fun loginByWeiBo(@Query("access_token") token: String?,
                      @Query("uid") openid: String): Observable<UserInfo>
+
+    /**
+     * Github登录获取用户信息
+     *
+     * @param token
+     * @param openid
+     * @return
+     */
+    @GET("auth/github/android")
+    fun loginByGithub(@Query("access_token") token: String): Observable<UserInfo>
 
     /**
      * 验证用户登录状态是否过期
