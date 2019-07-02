@@ -1,19 +1,22 @@
 package com.cyl.musiclake.ui.my;
 
 import android.content.Intent;
-import android.support.design.widget.TextInputLayout;
+import android.net.Uri;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.cyl.musicapi.netease.LoginInfo;
+import com.cyl.musiclake.BuildConfig;
 import com.cyl.musiclake.R;
 import com.cyl.musiclake.common.Constants;
 import com.cyl.musiclake.event.LoginEvent;
 import com.cyl.musiclake.ui.base.BaseActivity;
 import com.cyl.musiclake.ui.my.user.User;
+import com.cyl.musiclake.utils.LogUtil;
 import com.cyl.musiclake.utils.ToastUtils;
+import com.cyl.musiclake.utils.Tools;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -99,6 +102,29 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
         mPresenter.loginByQQ(this);
     }
 
+    @OnClick(R.id.githubLogin)
+    public void toGihubLogin() {
+        String auth = "https://github.com/login/oauth/authorize?client_id=" + Constants.GITHUB_CLIENT_ID + "&redirect_uri=" + Constants.GITHUB_REDIRECT_URI + "&state=" + BuildConfig.APPLICATION_ID;
+        Tools.INSTANCE.openBrowser(this, auth);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Uri uri = intent.getData();
+        if (uri != null) {
+            String code = uri.getQueryParameter("code");
+            String state = uri.getQueryParameter("state");
+            if (mPresenter != null && code != null && state != null) {
+                LogUtil.d(TAG, "onNewIntent code=" + code + " state+" + state);
+                mPresenter.loginByGithub(code, state);
+            } else {
+                ToastUtils.show("Github 授权失败");
+            }
+        } else {
+            ToastUtils.show("Github 授权失败");
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -167,7 +193,7 @@ public class LoginActivity extends BaseActivity<LoginPresenter> implements Login
 
     private void updateTokenView(boolean b) {
         if (mPresenter != null) {
-            mPresenter.loginServer(mAccessToken.getToken(), mAccessToken.getUid(), Constants.WEIBO);
+            mPresenter.loginServer(mAccessToken.getToken(), mAccessToken.getUid(), Constants.OAUTH_WEIBO);
         }
     }
 
