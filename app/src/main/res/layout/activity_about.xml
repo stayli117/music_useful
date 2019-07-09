@@ -23,8 +23,6 @@
 
             <include layout="@layout/card_about_2" />
 
-            <include layout="@layout/card_about_3" />
-
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
