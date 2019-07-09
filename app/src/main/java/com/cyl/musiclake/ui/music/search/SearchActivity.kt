@@ -20,6 +20,7 @@ import com.cyl.musiclake.ui.base.BaseActivity
 import com.cyl.musiclake.ui.main.PageAdapter
 import com.cyl.musiclake.ui.music.search.fragment.SearchSongsFragment
 import com.cyl.musiclake.utils.AnimationUtils
+import com.cyl.musiclake.utils.LogUtil
 import com.cyl.musiclake.utils.Tools
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
