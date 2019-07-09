@@ -30,6 +30,7 @@ import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.tauth.Tencent;
 
+import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.util.ArrayList;
@@ -94,6 +95,8 @@ public class MusicApp extends Application {
         if (manager != null) {
             manager.getDefaultDisplay().getSize(screenSize);
         }
+        // 增加eventbus的编译器注解处理
+        EventBus.builder().addIndex(new MusicLakeEventBusIndex()).installDefaultEventBus();
         ThemeStore.getThemeMode();
     }
 
