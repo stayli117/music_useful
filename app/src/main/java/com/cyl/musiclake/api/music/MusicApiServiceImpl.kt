@@ -204,6 +204,9 @@ object MusicApiServiceImpl {
                                 userId = it.user.userId
                                 content = it.content
                                 type = Constants.NETEASE
+                                user = it.user
+                                beReplied = it.beReplied
+
                             }
                             comments.add(songComment)
                         }

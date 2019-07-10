@@ -27,6 +27,13 @@ class SongComment() {
     var content: String = ""
     var time: Long = 0
     var type: String = ""
+    var user: User?=User("","","","")
+    var beReplied:List<BeRepliedItem>?=ArrayList()
+    override fun toString(): String {
+        return "SongComment(userId='$userId', avatarUrl='$avatarUrl', nick='$nick', commentId='$commentId', content='$content', time=$time, type='$type', user=$user, beReplied=$beReplied)"
+    }
+
+
 }
 
 
