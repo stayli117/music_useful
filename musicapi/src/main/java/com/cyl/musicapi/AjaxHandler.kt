@@ -4,6 +4,8 @@ import android.util.Base64
 import android.util.Log
 import com.cyl.musicapi.dsbridge.CompletionHandler
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
 import java.util.*
@@ -67,8 +69,8 @@ object AjaxHandler {
                 if (requestData.getString("body") != null) {
                     data = requestData.getString("body")
                 }
-                val requestBody = RequestBody
-                        .create(MediaType.parse(contentType), data)
+
+                val requestBody = data.toRequestBody(contentType.toMediaTypeOrNull())
                 rb.post(requestBody)
             }
             // 创建并发送HTTP请求
@@ -88,18 +90,18 @@ object AjaxHandler {
 
 
                     val data: String = if (finalEncode) {
-                        Base64.encodeToString(response.body()!!.bytes(), Base64.DEFAULT)
+                        Base64.encodeToString(response.body!!.bytes(), Base64.DEFAULT)
                     } else {
-                        response.body()!!.string()
+                        response.body!!.string()
                     }
                     Log.d(TAG, "onResponse:----$responseData")
 
                     //如果需要编码，结果将由Base64编码并返回 If encoding is needed, the result is encoded by Base64 and returned
                     Log.e("TAG", "onResponse:-----$data")
                     responseData["responseText"] = data
-                    responseData["statusCode"] = response.code()
-                    responseData["statusMessage"] = response.message()
-                    val responseHeaders = response.headers().toMultimap()
+                    responseData["statusCode"] = response.code
+                    responseData["statusMessage"] = response.message
+                    val responseHeaders = response.headers.toMultimap()
                     responseData["headers"] = responseHeaders
 
                     Log.d(TAG, "onResponse:-----$responseData")
