@@ -3,8 +3,6 @@ package com.cyl.musicapi
 import android.content.Context
 import android.util.Log
 import android.webkit.JavascriptInterface
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import com.cyl.musicapi.bean.*
 import com.cyl.musicapi.dsbridge.CompletionHandler
 import com.cyl.musicapi.dsbridge.DWebView
@@ -159,25 +157,25 @@ object BaseApiImpl {
 
     fun getComment(vendor: String, id: String, success: (result: Any) -> Unit, fail: ((String) -> Unit)? = null) {
         mWebView?.callHandler("api.getComment", arrayOf(vendor, id, 1, 50)) { retValue: JSONObject ->
+            Log.d("getComment", "retValue --> " + retValue.toString())
             if (retValue["status"] as Boolean) {
-                println(retValue.toString())
-                val rr = retValue.getJSONObject("data").getJSONArray("comments")?.getJSONObject(0)
-                rr?.let {
-                    if (rr.has("user")) {
+                when(vendor){
+                    Constants.NETEASE-> {
                         val objectType = object : TypeToken<SongCommentData<NeteaseComment>>() {}.type
                         val data = gson.fromJson<SongCommentData<NeteaseComment>>(retValue.toString(), objectType)
                         success.invoke(data)
                     }
-                    if (rr.has("avatarurl")) {
+                    Constants.QQ->{
                         val objectType = object : TypeToken<SongCommentData<QQComment>>() {}.type
                         val data = gson.fromJson<SongCommentData<QQComment>>(retValue.toString(), objectType)
                         success.invoke(data)
                     }
-                    if (rr.has("avatar")) {
+                    Constants.XIAMI->{
                         val objectType = object : TypeToken<SongCommentData<XiamiComment>>() {}.type
                         val data = gson.fromJson<SongCommentData<XiamiComment>>(retValue.toString(), objectType)
                         success.invoke(data)
                     }
+                    else -> fail?.invoke("不存在type")
                 }
             } else {
                 fail?.invoke(retValue["msg"].toString())

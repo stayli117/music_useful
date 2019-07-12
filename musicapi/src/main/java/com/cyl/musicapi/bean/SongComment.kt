@@ -20,6 +20,7 @@ data class User(@SerializedName("avatarUrl")
                 val userId: String = "")
 
 class SongComment() {
+    var isHot: Boolean = false
     var userId: String = ""
     var avatarUrl: String = ""
     var nick: String = ""
@@ -27,13 +28,11 @@ class SongComment() {
     var content: String = ""
     var time: Long = 0
     var type: String = ""
-    var user: User?=User("","","","")
-    var beReplied:List<BeRepliedItem>?=ArrayList()
+    var user: User? = User("", "", "", "")
+    var beReplied: List<BeRepliedItem>? = ArrayList()
     override fun toString(): String {
         return "SongComment(userId='$userId', avatarUrl='$avatarUrl', nick='$nick', commentId='$commentId', content='$content', time=$time, type='$type', user=$user, beReplied=$beReplied)"
     }
-
-
 }
 
 
@@ -108,7 +107,9 @@ data class NeteaseComment(@SerializedName("beReplied")
 data class CommentData<T>(@SerializedName("total")
                           val total: Int = 0,
                           @SerializedName("comments")
-                          val comments: List<T>?)
+                          val comments: List<T>?,
+                          @SerializedName("hotComments")
+                          val hotComments: List<T>?)
 
 
 data class BeRepliedItem(@SerializedName("user")

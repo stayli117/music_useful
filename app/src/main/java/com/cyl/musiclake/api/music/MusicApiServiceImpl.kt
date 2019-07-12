@@ -94,7 +94,7 @@ object MusicApiServiceImpl {
                                 musicList.add(MusicUtils.getMusic(music))
                             }
                         } catch (e: Throwable) {
-                            LogUtil.e("search", e.message,e)
+                            LogUtil.e("search", e.message, e)
                         }
                         LogUtil.e("search", "结果：" + musicList.size)
 
@@ -190,93 +190,120 @@ object MusicApiServiceImpl {
      */
     fun getMusicComment(vendor: String, mid: String): Observable<MutableList<SongComment>>? {
         return when (vendor) {
-            Constants.NETEASE -> create { result ->
-                BaseApiImpl.getComment(vendor, mid, {
-                    it as SongCommentData<NeteaseComment>
-                    if (it.status) {
-                        val comments = mutableListOf<SongComment>()
-                        it.data?.comments?.forEach {
-                            val songComment = SongComment().apply {
-                                avatarUrl = it.user.avatarUrl
-                                nick = it.user.nickname
-                                commentId = it.commentId.toString()
-                                time = it.time
-                                userId = it.user.userId
-                                content = it.content
-                                type = Constants.NETEASE
-                                user = it.user
-                                beReplied = it.beReplied
-
-                            }
-                            comments.add(songComment)
-                        }
-                        result.onNext(comments)
-                        result.onComplete()
-                    } else {
-                        result.onError(Throwable(it.msg))
-                    }
-                }, {
-                    ToastUtils.show(it)
-                })
-            }
-            Constants.QQ -> create { result ->
-                BaseApiImpl
-                        .getComment(vendor, mid, {
-                            it as SongCommentData<QQComment>
-                            if (it.status) {
-                                val comments = mutableListOf<SongComment>()
-                                it.data?.comments?.forEach {
-                                    val songComment = SongComment().apply {
-                                        avatarUrl = it.avatarurl
-                                        nick = it.nick
-                                        commentId = it.rootcommentid
-                                        time = it.time * 1000
-                                        userId = it.uin
-                                        content = it.rootcommentcontent
-                                        type = Constants.QQ
-                                    }
-                                    comments.add(songComment)
-                                }
-                                result.onNext(comments)
-                                result.onComplete()
-                            } else {
-                                result.onError(Throwable(it.msg))
-                            }
-                        }, {
-                            ToastUtils.show(it)
-                        })
-            }
-            Constants.XIAMI -> create { result ->
-                BaseApiImpl
-                        .getComment(vendor, mid, {
-                            it as SongCommentData<XiamiComment>
-                            if (it.status) {
-                                val comments = mutableListOf<SongComment>()
-                                it.data?.comments?.forEach {
-                                    val songComment = SongComment().apply {
-                                        avatarUrl = it.avatar
-                                        nick = it.nickName
-                                        commentId = it.commentId.toString()
-                                        time = it.gmtCreate
-                                        userId = it.userId.toString()
-                                        content = it.message
-                                        type = Constants.XIAMI
-                                    }
-                                    comments.add(songComment)
-                                }
-                                result.onNext(comments)
-                                result.onComplete()
-                            } else {
-                                result.onError(Throwable(it.msg))
-                            }
-                        }, {
-                            ToastUtils.show(it)
-                        })
-            }
+            Constants.NETEASE -> getMusicCommentNetease(vendor, mid)
+            Constants.QQ -> getMusicCommentQQ(vendor, mid)
+            Constants.XIAMI -> getMusicCommentXiami(vendor, mid)
             else -> null
         }
     }
 
+    private fun getMusicCommentNetease(vendor: String, mid: String): Observable<MutableList<SongComment>>? {
+        return create { result ->
+            BaseApiImpl.getComment(vendor, mid, { it ->
+                it as SongCommentData<NeteaseComment>
+                if (it.status) {
+                    val comments = mutableListOf<SongComment>()
+                    val c_data = it.data
+                    addComment(c_data?.hotComments,comments){ it ->
+                        it as SongComment
+                        it.isHot = true
+                        comments.add(it)
+                    }
+                    addComment(c_data?.comments,comments){it ->
+                        it as SongComment
+                        it.isHot = false
+                        comments.add(it)
+                    }
+                    result.onNext(comments)
+                    result.onComplete()
+                } else {
+                    result.onError(Throwable(it.msg))
+                }
+            }, {
+                ToastUtils.show(it)
+            })
+        }
+    }
+
+    private fun addComment(sorce_comments:List<Any>?,comments :MutableList<SongComment>,
+         netease:(result: Any) -> Unit
+    ){
+        sorce_comments?.forEach {
+            it as NeteaseComment
+            val songComment = SongComment().apply {
+                avatarUrl = it.user.avatarUrl
+                nick = it.user.nickname
+                commentId = it.commentId.toString()
+                time = it.time
+                userId = it.user.userId
+                content = it.content
+                type = Constants.NETEASE
+                user = it.user
+                beReplied = it.beReplied
+            }
+            netease.invoke(songComment)
+        }
+    }
+
+    private fun getMusicCommentQQ(vendor: String, mid: String): Observable<MutableList<SongComment>>? {
+        return create { result ->
+            BaseApiImpl
+                    .getComment(vendor, mid, {
+                        it as SongCommentData<QQComment>
+                        if (it.status) {
+                            val comments = mutableListOf<SongComment>()
+                            it.data?.comments?.forEach {
+                                val songComment = SongComment().apply {
+                                    avatarUrl = it.avatarurl
+                                    nick = it.nick
+                                    commentId = it.rootcommentid
+                                    time = it.time * 1000
+                                    userId = it.uin
+                                    content = it.rootcommentcontent
+                                    type = Constants.QQ
+                                }
+                                comments.add(songComment)
+                            }
+                            result.onNext(comments)
+                            result.onComplete()
+                        } else {
+                            result.onError(Throwable(it.msg))
+                        }
+                    }, {
+                        ToastUtils.show(it)
+                    })
+        }
+    }
+
+    private fun getMusicCommentXiami(vendor: String, mid: String): Observable<MutableList<SongComment>>? {
+        return create { result ->
+            BaseApiImpl
+                    .getComment(vendor, mid, {
+                        it as SongCommentData<XiamiComment>
+                        if (it.status) {
+                            val comments = mutableListOf<SongComment>()
+                            it.data?.comments?.forEach {
+                                val songComment = SongComment().apply {
+                                    avatarUrl = it.avatar
+                                    nick = it.nickName
+                                    commentId = it.commentId.toString()
+                                    time = it.gmtCreate
+                                    userId = it.userId.toString()
+                                    content = it.message
+                                    type = Constants.XIAMI
+                                }
+                                comments.add(songComment)
+                            }
+                            result.onNext(comments)
+                            result.onComplete()
+                        } else {
+                            result.onError(Throwable(it.msg))
+                        }
+                    }, {
+                        ToastUtils.show(it)
+                    })
+        }
+    }
 
     /**
      * 获取歌手单曲
