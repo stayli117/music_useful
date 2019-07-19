@@ -282,7 +282,7 @@ object MusicApiServiceImpl {
     fun getArtistSongs(vendor: String, id: String, offset: Int = 0, limit: Int = 50): Observable<Artist> {
         return create { result ->
             BaseApiImpl
-                    .getArtistSongs(vendor, id, {
+                    .getArtistSongs(vendor, id, offset,limit,{
                         if (it.status) {
                             LogUtil.d(TAG, it.toString())
                             val musicList = arrayListOf<Music>()

@@ -3,10 +3,10 @@ package com.cyl.musiclake.ui.base;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +61,9 @@ public abstract class BaseLazyFragment<T extends BaseContract.BasePresenter> ext
     @Nullable
     @BindView(R.id.error_message_view)
     public TextView errorTextView;
+    @Nullable
+    @BindView(R.id.tv_empty)
+    public TextView emptyTextView;
     @Nullable
     @BindView(R.id.loading_progress_bar)
     public ProgressBar loadingProgressBar;
