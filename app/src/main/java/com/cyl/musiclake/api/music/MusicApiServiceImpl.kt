@@ -204,16 +204,16 @@ object MusicApiServiceImpl {
                 if (it.status) {
                     val comments = mutableListOf<SongComment>()
                     val c_data = it.data
-                    addComment(c_data?.hotComments,comments){ it ->
-                        it as SongComment
-                        it.isHot = true
-                        comments.add(it)
-                    }
-                    addComment(c_data?.comments,comments){it ->
-                        it as SongComment
-                        it.isHot = false
-                        comments.add(it)
-                    }
+//                    addComment(c_data?.hotComments,comments){ it ->
+//                        it as SongComment
+//                        it.isHot = true
+//                        comments.add(it)
+//                    }
+//                    addComment(c_data?.comments,comments){it ->
+//                        it as SongComment
+//                        it.isHot = false
+//                        comments.add(it)
+//                    }
                     result.onNext(comments)
                     result.onComplete()
                 } else {
@@ -238,8 +238,8 @@ object MusicApiServiceImpl {
                 userId = it.user.userId
                 content = it.content
                 type = Constants.NETEASE
-                user = it.user
-                beReplied = it.beReplied
+//                user = it.user
+//                beReplied = it.beReplied
             }
             netease.invoke(songComment)
         }
@@ -312,7 +312,7 @@ object MusicApiServiceImpl {
     fun getArtistSongs(vendor: String, id: String, offset: Int = 0, limit: Int = 50): Observable<Artist> {
         return create { result ->
             BaseApiImpl
-                    .getArtistSongs(vendor, id, {
+                    .getArtistSongs(vendor, id, offset,limit,{
                         if (it.status) {
                             LogUtil.d(TAG, it.toString())
                             val musicList = arrayListOf<Music>()
