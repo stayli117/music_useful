@@ -104,7 +104,7 @@ dependencies {
     implementation 'org.litepal.android:core:2.0.0'
 
     //dagger2
-    implementation 'com.google.dagger:dagger:2.11'
+    implementation 'com.google.dagger:dagger:2.13'
     implementation 'com.google.android:flexbox:1.0.0'
 
     // Appcompat-v7 (only Anko Commons)
@@ -115,7 +115,7 @@ dependencies {
 
     //Eventbus
     implementation 'org.greenrobot:eventbus:3.1.1'
-    kapt 'com.google.dagger:dagger-compiler:2.11'
+    kapt 'com.google.dagger:dagger-compiler:2.13'
 
     //leakCanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
