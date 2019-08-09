@@ -7,7 +7,14 @@ repositories {
     mavenCentral()
 }
 android {
-
+    signingConfigs {
+        release {
+            keyAlias 'musiclake'
+            keyPassword '123123'
+            storeFile file('../app/musiclake.jks')
+            storePassword '123123'
+        }
+    }
 
     defaultConfig {
         applicationId "com.cyl.musiclake"
@@ -27,11 +34,13 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             //自定义配置参数
             buildConfigField "boolean", "HAS_DOWNLOAD", "false"//是否屏蔽下载功能
         }
         debug {
+            // signingConfig signingConfigs.release
             //自定义配置参数
             buildConfigField "boolean", "HAS_DOWNLOAD", "true"//是否屏蔽下载功能
         }
@@ -55,7 +64,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-
+kapt {
+    arguments {
+        arg('eventBusIndex', 'com.cyl.musiclake.MusicLakeEventBusIndex')
+    }
+}
 dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -116,7 +129,7 @@ dependencies {
     //Eventbus
     implementation 'org.greenrobot:eventbus:3.1.1'
     kapt 'com.google.dagger:dagger-compiler:2.13'
-
+    kapt 'org.greenrobot:eventbus-annotation-processor:3.1.1'
     //leakCanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'

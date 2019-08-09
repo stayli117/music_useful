@@ -8,8 +8,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import androidx.multidex.MultiDex;
-
 import com.cyl.musicapi.BaseApiImpl;
 import com.cyl.musiclake.bean.HotSearchBean;
 import com.cyl.musiclake.bean.data.PlaylistLoader;
@@ -39,6 +37,8 @@ import org.litepal.LitePal;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.multidex.MultiDex;
 
 /**
  * tinker热更新需要
