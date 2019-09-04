@@ -1,8 +1,12 @@
 package com.cyl.musiclake.api.net;
 
+import android.util.Log;
+
+import com.cyl.musiclake.BuildConfig;
 import com.cyl.musiclake.MusicApp;
 import com.cyl.musiclake.R;
 import com.cyl.musiclake.api.gson.MyGsonConverterFactory;
+import com.cyl.musiclake.utils.LogUtil;
 import com.cyl.musiclake.utils.NetworkUtils;
 import com.franmontiel.persistentcookiejar.ClearableCookieJar;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
@@ -78,21 +82,29 @@ public class ApiManager {
      */
     private static OkHttpClient getOkHttpClient() {
         if (mOkHttpClient == null) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
             // Cookie 持久化
             ClearableCookieJar cookieJar =
                     new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(MusicApp.getAppContext()));
             synchronized (ApiManager.class) {
                 Cache cache = new Cache(new File(MusicApp.getAppContext().getCacheDir(), "HttpCache"), 1024 * 1024 * 100);
-                if (mOkHttpClient == null) mOkHttpClient = new OkHttpClient.Builder()
-                        .cache(cache)
-                        .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
-                        .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
-                        .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
-                        .cookieJar(cookieJar)
-                        .addInterceptor(logging)
-                        .build();
+                if (mOkHttpClient == null) {
+                    OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+                    //设置http 日志拦截
+                    if (BuildConfig.DEBUG) {
+                        HttpLoggingInterceptor httpLogging = new HttpLoggingInterceptor();
+                        httpLogging.setLevel(HttpLoggingInterceptor.Level.BODY);
+                        builder.addInterceptor(httpLogging);
+                    }
+
+                    mOkHttpClient = builder.cache(cache)
+                            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                            .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+                            .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+                            .cookieJar(cookieJar)
+                            .build();
+                }
+
             }
         }
         return mOkHttpClient;
@@ -160,18 +172,20 @@ public class ApiManager {
                     @Override
                     public void onError(Throwable e) {
                         if (e instanceof HttpException) {
+                            String errorInfo = "";
                             try {
-                                String string = ((HttpException) e).response().errorBody().string();
-                                if (string != null) {
-                                    JSONObject jsonObject = new JSONObject(string);
-                                    String error = jsonObject.getString("msg");
-                                    result.error(error);
-                                } else {
-                                    result.error("未知错误");
-                                }
+                                errorInfo = ((HttpException) e).response().errorBody().string();
+                                JSONObject jsonObject = new JSONObject(errorInfo);
+                                String error = jsonObject.getString("msg");
+                                result.error(error);
                             } catch (IOException | JSONException e1) {
                                 e1.printStackTrace();
-                                result.error(MusicApp.getAppContext().getString(R.string.error_connection));
+                                LogUtil.d("ApiManager", "errorInfo=" + errorInfo);
+                                if (e1 instanceof JSONException) {
+                                    result.error(errorInfo);
+                                } else {
+                                    result.error(MusicApp.getAppContext().getString(R.string.error_connection));
+                                }
                             }
                         } else {
                             if (result != null) {
