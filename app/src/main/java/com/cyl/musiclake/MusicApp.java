@@ -56,7 +56,7 @@ public class MusicApp extends Application {
     public static Gson GSON;
 
     //socket
-    public static SocketManager socketManager;
+//    public static SocketManager socketManager;
     /**
      * socket是否打开
      */
@@ -109,8 +109,7 @@ public class MusicApp extends Application {
         //腾讯
         mTencent = Tencent.createInstance(Constants.APP_ID, this);
         //初始化socket
-        socketManager = new SocketManager();
-        socketManager.initSocket();
+//        SocketManager.INSTANCE.initSocket();
     }
 
     /**
@@ -212,9 +211,7 @@ public class MusicApp extends Application {
                 activities.remove(activity);
                 if (Activitycount == 0) {
                     LogUtil.d(">>>>>>>>>>>>>>>>>>>APP 关闭");
-                    if (socketManager != null) {
-                        socketManager.toggleSocket(false);
-                    }
+                    SocketManager.INSTANCE.toggleSocket(false);
                 }
             }
         });
