@@ -5,6 +5,9 @@ apply plugin: 'kotlin-android-extensions'
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'libs'
+    }
 }
 android {
     signingConfigs {
@@ -69,6 +72,7 @@ kapt {
         arg('eventBusIndex', 'com.cyl.musiclake.MusicLakeEventBusIndex')
     }
 }
+
 dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -171,8 +175,8 @@ dependencies {
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.3'
 
     //Android音乐接口Api
-    implementation 'com.github.caiyonglong:musicapi:1.0.6'
-//    implementation project(':musicapi')
+//    implementation 'com.github.caiyonglong:musicapi:1.0.6'
+    compile(name:'musicapi', ext:'aar')
     //缓存
     implementation 'com.danikula:videocache:2.7.1'
 
