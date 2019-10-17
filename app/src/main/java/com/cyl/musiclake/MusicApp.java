@@ -2,13 +2,12 @@ package com.cyl.musiclake;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.view.WindowManager;
 
-import com.cyl.musicapi.BaseApiImpl;
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
+
 import com.cyl.musiclake.bean.HotSearchBean;
 import com.cyl.musiclake.common.Constants;
 import com.cyl.musiclake.common.NavigationHelper;
@@ -20,55 +19,38 @@ import com.cyl.musiclake.player.PlayManager;
 import com.cyl.musiclake.player.cache.CacheFileNameGenerator;
 import com.cyl.musiclake.socket.SocketManager;
 import com.cyl.musiclake.ui.download.TasksManager;
-import com.cyl.musiclake.ui.theme.ThemeStore;
 import com.cyl.musiclake.utils.FileUtils;
 import com.cyl.musiclake.utils.LogUtil;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.google.gson.Gson;
 import com.liulishuo.filedownloader.FileDownloader;
-import com.liulishuo.filedownloader.util.FileDownloadLog;
-import com.sina.weibo.sdk.WbSdk;
-import com.sina.weibo.sdk.auth.AuthInfo;
 import com.tencent.bugly.Bugly;
 import com.tencent.tauth.Tencent;
 
-import org.greenrobot.eventbus.EventBus;
 import org.litepal.LitePal;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.multidex.MultiDex;
-
 /**
  * tinker热更新需要
  */
-public class MusicApp extends Application {
+public class MusicApp extends MultiDexApplication {
     @SuppressLint("StaticFieldLeak")
     private static MusicApp sInstance;
+
     private PlayManager.ServiceToken mToken;
+
     @SuppressLint("StaticFieldLeak")
     public static Context mContext;
 
     //QQ第三方登录
     public static Tencent mTencent;
 
-    public static Gson GSON;
-
-    //socket
-//    public static SocketManager socketManager;
-    /**
-     * socket是否打开
-     */
-    public static Boolean isOpenSocket = true;
-
-    public static Boolean isShowingFloatView = false;
+    public static Gson GSON = new Gson();
 
     public static List<HotSearchBean> hotSearchList;
-
-    private ApplicationComponent mApplicationComponent;
-    public static Point screenSize = new Point();
 
     public static synchronized MusicApp getInstance() {
         return sInstance;
@@ -80,46 +62,30 @@ public class MusicApp extends Application {
 
     public static List<Activity> activities = new ArrayList<>();
 
+    public static int count = 0;
+    public static int ActivityCount = 0;
+    private ApplicationComponent mApplicationComponent;
+
     @Override
     public void onCreate() {
         super.onCreate();
-//        LeakCanary.install(this);
         sInstance = this;
         mContext = this;
+        registerListener();
         initApplicationComponent();
+        initSDK();
+    }
+
+    private void initSDK() {
         LitePal.initialize(this);
         initBugly();
-        initLogin();
         initDB();
-        GSON = new Gson();
-        registerListener();
-        initFileDownload();
-        BaseApiImpl.INSTANCE.initWebView(this);
-        WindowManager manager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        if (manager != null) {
-            manager.getDefaultDisplay().getSize(screenSize);
-        }
-        // 增加eventbus的编译器注解处理
-        EventBus.builder().addIndex(new MusicLakeEventBusIndex()).installDefaultEventBus();
-        ThemeStore.getThemeMode();
+        //内存检测
+//        if (BuildConfig.DEBUG) {
+//            LeakCanary.install(this);
+//        }
     }
 
-    private void initLogin() {
-        //创建微博实例
-        WbSdk.install(this, new AuthInfo(this, Constants.APP_KEY, Constants.REDIRECT_URL, Constants.SCOPE));
-        //腾讯
-        mTencent = Tencent.createInstance(Constants.APP_ID, this);
-        //初始化socket，因后台服务器压力大，暂时注释
-//        SocketManager.INSTANCE.initSocket();
-    }
-
-    /**
-     * 初始化文件下载
-     */
-    private void initFileDownload() {
-        FileDownloadLog.NEED_LOG = BuildConfig.DEBUG;
-        FileDownloader.setup(this);
-    }
 
     /**
      * 初始化bugly
@@ -142,6 +108,7 @@ public class MusicApp extends Application {
         NavigationHelper.INSTANCE.scanFileAsync(this);
         //线程初始化数据库，优化启动速度
         new Thread(() -> {
+            NavigationHelper.INSTANCE.scanFileAsync(this);
             PlaylistLoader.INSTANCE.createDefaultPlaylist(Constants.PLAYLIST_QUEUE_ID, getString(R.string.playlist_queue));
             PlaylistLoader.INSTANCE.createDefaultPlaylist(Constants.PLAYLIST_HISTORY_ID, getString(R.string.item_history));
             PlaylistLoader.INSTANCE.createDefaultPlaylist(Constants.PLAYLIST_LOVE_ID, getString(R.string.item_favorite));
@@ -163,9 +130,6 @@ public class MusicApp extends Application {
         FileDownloader.getImpl().pauseAll();
     }
 
-    public static int count = 0;
-    public static int Activitycount = 0;
-
     /**
      * 注册监听
      */
@@ -174,7 +138,7 @@ public class MusicApp extends Application {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
                 activities.add(activity);
-                Activitycount++;
+                ActivityCount++;
             }
 
             @Override
@@ -209,9 +173,9 @@ public class MusicApp extends Application {
 
             @Override
             public void onActivityDestroyed(Activity activity) {
-                Activitycount--;
+                ActivityCount--;
                 activities.remove(activity);
-                if (Activitycount == 0) {
+                if (ActivityCount == 0) {
                     LogUtil.d(">>>>>>>>>>>>>>>>>>>APP 关闭");
                     SocketManager.INSTANCE.toggleSocket(false);
                 }
