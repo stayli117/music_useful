@@ -4,11 +4,12 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.cyl.musiclake.R
 import com.cyl.musiclake.bean.Music
 import com.cyl.musiclake.common.Constants
