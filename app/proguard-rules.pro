@@ -155,3 +155,8 @@
   **[] $VALUES;
   public *;
 }
+## musicapi 混淆
+-dontwarn com.cyl.musicapi.**
+-keep class com.cyl.musicapi.** { *; }
+
+-keep class org.apache.http.** { *; }

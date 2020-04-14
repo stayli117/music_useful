@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
 import com.cyl.musiclake.bean.HotSearchBean;
@@ -24,6 +23,7 @@ import com.cyl.musiclake.utils.LogUtil;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.google.gson.Gson;
 import com.liulishuo.filedownloader.FileDownloader;
+import com.liulishuo.filedownloader.util.FileDownloadLog;
 import com.tencent.bugly.Bugly;
 import com.tencent.tauth.Tencent;
 
@@ -74,6 +74,7 @@ public class MusicApp extends MultiDexApplication {
         registerListener();
         initApplicationComponent();
         initSDK();
+        initFileDownload();
     }
 
     private void initSDK() {
@@ -86,6 +87,13 @@ public class MusicApp extends MultiDexApplication {
 //        }
     }
 
+    /**
+     * 初始化文件下载
+     */
+    private void initFileDownload() {
+        FileDownloadLog.NEED_LOG = BuildConfig.DEBUG;
+        FileDownloader.setupOnApplicationOnCreate(this);
+    }
 
     /**
      * 初始化bugly
@@ -182,13 +190,6 @@ public class MusicApp extends MultiDexApplication {
             }
         });
     }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
-    }
-
 
     /**
      * AndroidVideoCache缓存设置
